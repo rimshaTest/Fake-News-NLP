@@ -1,0 +1,180 @@
+\documentclass[a4paper, 12pt]{article}
+% Packages
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{enumitem}
+\usepackage{booktabs}
+% Page layout
+\geometry{margin=1in}
+% Header and Footer
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Technical Report}
+\fancyhead[R]{Data Science Project}
+\fancyfoot[C]{\thepage}
+% Colors for code
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+% Title page
+\title{Technical Report: Final Project DS 5220: Supervised Machine Learning and Learning Theory
+}
+\author{Team Members:\\ Cameron Jester & Rimsha Kayastha
+       Khoury College of Computer Sciences\\
+        Data Science Program\\
+        \texttt{jester.c@northeastern.edu,  kayastha.r@northeastern.edu}}
+\date{\today}
+% Begin document
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+% Sections
+\section{Abstract}
+\label{sec:Abstract}
+Overview: Summarize your project report in several paragraphs.
+
+In the ever-evoliving world of media consumption, news outlets, and news itself have gone through immense changes. With tools such as ChatGPT and the new marketing technique of "click-bait", the rise in fake news has been dramatic. With fake news lurking around every media outlet, consumers can become lost in what is real or not, and can lead to issues such as news distrust, the inability to make informed decisions, and even drive people against one another. The motiviation for this final project is to create a classification model to detect fake news to alleviate some of the issues prevously mentioned. 
+
+With 2024 being an election year, it is of utmost importance that citizens of the U.S. are not being fed misinformation. Candidates may use platforms to intentionally spread lies about others in order to gain more popularity for voters. This type of behavior can be combated with a news classificiation tool. Classifying news as real or fake can have lasting implications for the political world and beyond. 
+
+*NEED TO GET THIS IN PROPER SPOT* 
+
+ \begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{fake-article.jpg}
+    \caption{Counterfit Article Distributed by Activists, npr.org}
+    \label{fig:enter-label}
+ \end{figure}
+
+As this supervised machine learning problem involves text-based data, it will become a robust Natural Language Processing project. Due to the nature of news articles, many have meanings embedded within long phrases or sentences. Given this, it is important to chose a model with self-attention mechanisms to learn the behavior of words in context. Therefore, BERT (Bidirectional Encoder Representations from Transformers) was chosen to complete this task as it a flexible, well-documented model to suit the needs of this project. After implementing BERT for encoding, two methods of classifying will be used: logistic Regression and K-Nearest-Neighbors. These two models will provide a straightford classification that will work well with the binary classes of the data. 
+
+As this dataset was downloaded from Kaggle.com, there was a few users who had used BERT to tokenize the data, but the projects listed build the model from the ground-up, whereas for this project the HuggingFace model architecture was used and then fine-tuned. Additionally, this projet deviated from others when it came to classifying the articles as real or fake as logistic regression and KNN were used.  
+
+
+Limitations in the approach of this project mainly revolved around time, given just 42 days between presentations, not excluding time off for holiday breaks, it was difficult to go as in-depth as desired for this project. A second major limitiation was the computational time and energy needed for this project. Unfortunatley, one of the group members' laptops could not locally handle the many parameters (340 million) of BERT, and their Google Collab ran out of RAM as well. These limitations made it difficult to work synchronously on the project, which was crucial given the limited time to complete everything. 
+
+
+
+To approach this as a supervised machine learning problem, it is critical to implement a model on labeled data. e
+
+
+\section{Experiment Setup}
+\label{sec:Experiment Setup}
+
+For our project, the Title column was used to train models as opposed to the Text columns due to a 512 token limitation on BERT. Given the nature of news articles, it felt unnessisary to truncate the Text column when the Title can provide accurate classification. Therefore, the Title column was used to classify whether an article was real or fake. 
+
+\subsection{Dataset Statistics}
+
+The dataset was obtained from Kaggle.com, a common data sharing platform. It was given a 10.0 usability score, meaning the data is complete, creditble, and compatible for anyone to use. The data contains 6256 news artciles and includes 4 columns: 'number', 'title', 'text', and 'label'. The 'number' column is simply a unique identifier and will be dropped for the purpose of analysis. The 'title' column is for the title of articles, and conversely, the 'text' column is for the body of each article. Finally, the 'label' column is where each article is given a binary class of either 'real' or 'fake', assinging it as a real article or a fake article repsectivly. The Title and Text columns both include punctuation such, but not limited to; periods, commas, and exclamation points. 
+
+
+\subsection{Implementation Techniques}
+
+To begin the technical aspect of this project, Visual Studio code was used as the IDE. Several packages needed to be installed which include: torch, transformers, scikit-learn, pandas, datasets, AutoModel, tensorflow, and tf-keras. Similarly, many packages were imported and can be seen below. 
+
+\begin{lstlisting}[language=Python, caption=Neccessary Packages to Import]
+import pandas as pd
+from bs4 import BeautifulSoup
+import re
+import torch
+from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+# from datasets import Dataset
+from transformers import AutoTokenizer # Hugging Face Transformers
+from transformers import AutoModel
+from transformers import TFAutoModelForSequenceClassification
+from tensorflow.keras.optimizers import Adam
+from sklearn.metrics import accuracy_score
+\end{lstlisting}
+
+After reading in the data, an encoder was initialized to transform the Label column as a One Hot Encoded column. The dataset was then split into a testing and training set, using an 80/20 split. A validation set was not created for this project. The tokenizer and models were initialized through the pretrained HuggingFace architechture previously installed.
+
+Then, the preprocessed Title column was fed into the model as an input and the resulted into a tokenized sequence for the model. There are a few important parameters in this line of code that should be further explained. For example, return$_$tensors = 'pt' means that the input should be compatible for pytorch. Following this is 'padding = True', is a parameter that is important for Transformers to conduct what is called batched processing. As padding was set to True, then all titles with less than 512 tokens (which is intialized later in this code line) are padded to get up to 512 tokens. Conversely, 'truncation = True' takes any text with over 512 tokens and reduces then until they meet the max length. 
+
+Following this, an optimizer called AdamW, which is popular from pytorch, was assigned with an learning rate of 5e $^-$5. The learning rate is set to how much each iteration should update the weights for each parameter. 
+
+Finally, a for loop was setup to pass over the data 3 times in which AdamW optimized through the data. It is important to note that in this step, it was set to zerograd() which means that backpropigation gradients did not acrue for each pass. As this part is only extracting the features for the model gradients do not need to be calculated, from there outputs (features) are extracted from the inputs we set and then cls embeddings from the models hidden states are set to a numpy array. 
+
+
+\begin{lstlisting}[language=Python, caption=Implementing and Fine-Tuning BERT]
+
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english") 
+model = AutoModel.from_pretrained("distilbert-base-uncased-finetuned-sst-2-english") 
+inputs = tokenizer(news_df['title'].to_list(), return_tensors='pt', padding=True, truncation=True, max_length=512)
+optimizer = AdamW(model.parameters(), lr=5e-5)
+model.train() 
+for epoch in range(3): 
+    optimizer.zero_grad() 
+    with torch.no_grad(): 
+        outputs = model(**inputs) 
+        cls_embeddings = outputs.last_hidden_state[:, 0, :].numpy()
+\end{lstlisting}
+
+
+
+\subsection{Model Architecture}
+
+
+
+
+\section{Experimentation Results}
+\label{sec:Experimentation Results}
+
+\section{Discussion}
+\label{sec:discussion}
+
+
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+
+\section{References}
+
+
+
+\label{sec:references}
+\bibliographystyle{plain}
+\bibliography{references}
+
+
+\end{document}
+
+
+https://www.dremio.com/wiki/transformers-in-nlp/#:~:text=Transformers%20have%20been%20used%20to,Parallelization%20leads%20to%20faster%20training.
+
+https://www.npr.org/2019/01/16/685857177/real-fake-news-activists-circulate-counterfeit-editions-of-the-washington-post
+
+https://blog.invgate.com/gpt-3-vs-bert#:~:text=While%20both%20models%20are%20very,one%20used%20to%20train%20BERT).
